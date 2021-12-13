@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Email Form</title>
+</head>
+<body>
+<div class="section_1">
+    <form action="/email_post" method="post">
+        email: <input type="text" name="email"><br/>
+        <input type="submit">
+    </form>
+
+    <button class="ajaxSend">보내기</button>
+
+    <div class="result_1"></div>
+</div>
+<div class="section_2">
+    <input type="text" name="search">
+    <button class="search_get">GET 검색</button>
+    <button class="search_post">GET 검색</button>
+    <div class="result_2"></div>
+</div>
+
+<script>
+    document.querySelector('.ajaxSend').addEventListener('click', function () {
+        let inputData = document.forms[0].elements[0].value;
+        sendAjax('http://localhost:3000/ajax_send_email', inputData);
+    })
+
+    function sendAjax(url, data) {
+        let sendData = {'email': data};
+        sendData = JSON.stringify(sendData);
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', url);
+        xhr.setRequestHeader('Content-Type', "application/json");
+        xhr.send(sendData);
+        xhr.addEventListener('load', function () {
+            console.log(xhr.responseText);
+            let result = xhr.responseText;
+            result = JSON.parse(result);
+            if (result.result != 'ok') return;
+            document.querySelector('.result_1').innerHTML = result.email
+        })
+    }
+
+    document.querySelector('.search_get').addEventListener('click', function () {
+        let inputData = document.getElementsByClassName('search')[0].value;
+        console.log(inputData);
+        search('http://localhost:3000/search', inputData);
+    })
+
+    function search(url, data){
+        let xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.send('1');
+        console.log(xhr);
+        xhr.addEventListener('load', function () {
+            console.log(xhr.responseText);
+            let result = xhr.responseText;
+            // result = JSON.parse(result);
+            document.querySelector('.result_2').innerHTML = result
+        })
+    }
+</script>
+
+</body>
+</html>
+
+
+<style>
+    div {
+        width: 100%;
+        height: 300px;
+
+        border: 1px solid #000;
+    }
+    div.section_1 {
+        width: 50%;
+        float: left;
+        box-sizing: border-box;
+
+        background: #FF957E;
+    }
+    div.result_1 {
+        height: 78.5%;
+        float: left;
+        box-sizing: border-box;
+
+        background: #FF957E;
+    }
+    div.section_2 {
+        width: 50%;
+        float: right;
+        box-sizing: border-box;
+
+        background: #DAF7A6;
+    }
+    div.result_2 {
+        height: 78.5%;
+        float: right;
+        box-sizing: border-box;
+        margin-top: 43px;
+        background: #DAF7A6;
+    }
+</style>
